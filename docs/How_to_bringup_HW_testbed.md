@@ -7,13 +7,14 @@ This file documents the hardware testbed setup using IxNetwork VM on an Ubuntu 2
 1. [Hardware Requirements](#hardware-requirements)
 1. [Prepare Testbed Server](#prepare-testbed-server)
 1. [Set Up Network](#setup-network)
-
+1. [Install IxNetwork VE](#install-ixnetwork-ve)
+1. [License IxNetwork VE](#license-ixnetwork-ve)
 ## Hardware Requirements
 
-* 7 Dentos Devices.
+* 1-7 Dentos Devices.
 * 1 Ixia Chassis with 16 10G port running IxOS/IxNetwork EA versions [We are using 9.20 EA].
 * 1 IxNetwork EA API server.
-* 1 linux with Ubuntu 22.04 (centos8 will also work or other distributions but the instructions bellow are for ubuntu 22.04)
+* 1 linux with Ubuntu 22.04 Server (centos8 will also work or other distributions but the instructions bellow are for ubuntu 22.04)
 TODO: create a lab BOM
 
 ## Prepare Testbed Server
@@ -42,7 +43,7 @@ TODO: create a lab BOM
     sudo apt -y install ubuntu-desktop (TODO: remove this dependency)
 ```
 
-* enable root (optional)
+* enable root ssh access (optional)
 
 ```Shell
     sudo sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
@@ -96,7 +97,7 @@ TODO: create a lab BOM
 ```
 
 ## Setup Network
-* setup management port configuration using this sample `/etc/netplan/00-installer-config.yaml`:
+* setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
 ---
@@ -112,7 +113,7 @@ network:
   bridges:
     br1:
       interfaces: [eth_used] # Bridge connected to ethernet
-      addresses: [10.36.118.11/24] # IP
+      addresses: [10.36.118.11/24] # Server IP
       routes:
         - to: default
           via: 10.36.118.1  # Default Gateway
@@ -137,12 +138,18 @@ network:
 sudo apt -y install yamllint
 yamllint /etc/netplan/00-installer-config.yaml
 ```
-
+* Apply Netplan and Edit Firewall Settings to allow IxNetwork DHCP Resolution on bridge:
+  * ```Shell
+    sudo netplan apply
+    sudo ufw allow in on br1
+    sudo ufw route allow in on br1
+    sudo ufw route allow out on br1
+    ```
 * reboot
-  * ensure networking is ok
+  * ensure networking is working, for example verify output received from ```curl www.google.com```
   * this is needed also for the permissions to be update, otherwise next step will fail
 
-### Install IxNetwork VE
+## Install IxNetwork VE
 
 * VMs
   * create vms folder
@@ -157,16 +164,18 @@ yamllint /etc/netplan/00-installer-config.yaml
 
 * start the VMs:
 
+
 ```Shell
 cd /vms
 
-sudo tar xjf IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2
+sudo tar xjf IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2 --use-compress-program=lbzip2
 
 virt-install --name IxNetwork-930 --memory 16000 --vcpus 8 --disk /vms/IxNetworkWeb_KVM_9.30.2212.22.qcow2,bus=sata --import --os-variant centos7.0 --network bridge=br1,model=virtio --noautoconsole
 virsh autostart IxNetwork-930
 
 ```
-
+  * Optionally use the following network flag to specify a mac address for use with a DHCP server:
+    * ``` --network bridge=br1,model=virtio,mac=01:23:45:67:89:AB``` 
 * configure the IxNetwork VM ip:
 
 ```Shell
@@ -192,3 +201,5 @@ virsh autostart IxNetwork-930
   The IPv6 global address is not configured
   To change the IP address, log in as admin (password: admin) below
 ```
+## License IxNetwork VE
+Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_run_testcases.md).
