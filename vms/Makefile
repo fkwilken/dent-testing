@@ -1,51 +1,60 @@
+#### MANUAL CONFIG ####
 N_LOAD_MODULES 	= 4
+
+CTL_BRIDGE 	= br1
+CTL_MAC		= ea:5f:f0:bc:96:aa
+
+CLIENT_MAC 	= 00:1a:c5:00:00:13
+# CLIENT_IP  	= 10.36.118.112
+
+CHASSIS_MAC = 00:1a:c5:00:00:20
+# CHASSIS_IP  = 10.36.118.150
+
+LOAD_MAC 	= 00:1a:c5:00:00:31 00:1a:c5:00:00:32 	00:1a:c5:00:00:33 	00:1a:c5:00:00:34
+# LOAD_IP 	= 10.36.118.161 	10.36.118.162 		10.36.118.163 		10.36.118.164
+LOAD_PCI	= pci_0000_65_00_0	pci_0000_65_00_1	pci_0000_65_00_2	pci_0000_65_00_3
+
+#### AUTO CONFIG #####
+DEFAULT_NETDEV = $(shell ip route | grep 'default' | cut -d " " -f 5)
+DEFAULT_IP	   = $(shell ip a show $(DEFAULT_NETDEV) | grep 'inet' | cut -d " " -f 6 )
+DEFAULT_GATEWAY = $(shell ip route | grep 'default' | cut -d " " -f 3)
+
 LOAD_MODULES 	= $(shell seq $(N_LOAD_MODULES))
 
 BZ2S 	= $(wildcard *.bz2 download/*.bz2)
 QCOWS 	= $(addprefix backups/, $(basename $(basename $(notdir $(BZ2S)))))
 
-#### AUTO NETWORK CONFIG #####
-DEFAULT_NETDEV = $(shell ip route | grep 'default' | cut -d " " -f 5)
-DEFAULT_IP	   = $(shell ip a show $(DEFAULT_NETDEV) | grep 'inet' | cut -d " " -f 6 )
-DEFAULT_GATEWAY = $(shell ip route | grep 'default' | cut -d " " -f 3)
-
-#### MANUAL NETWORK CONFIG ####
-CTL_BRIDGE 	= br1
-CTL_MAC		= ea:5f:f0:bc:96:aa
-
-CLIENT_MAC 	= 00:1a:c5:00:00:13
-CLIENT_IP  	= 10.36.118.112
-
-CHASSIS_MAC = 00:1a:c5:00:00:20
-CHASSIS_IP  = 10.36.118.150
-
-LOAD_MAC 	= 00:1a:c5:00:00:31 00:1a:c5:00:00:32 	00:1a:c5:00:00:33 	00:1a:c5:00:00:34
-LOAD_IP 	= 10.36.118.161 	10.36.118.162 		10.36.118.163 		10.36.118.164
-LOAD_PCI	= pci_0000_65_00_0	pci_0000_65_00_1	pci_0000_65_00_2	pci_0000_65_00_3
-
-### Colors ###
+#### Colors ####
 BLUE=\033[0;34m
 NOCOLOR=\033[0m
-#### Manual Targets ####
-.PHONY: all help extract vm_overwrite download
 
-all help: 
+#### Manual Targets ####
+.PHONY: all help extract vm_overwrite download deploy
+
+all help:
+	@echo "Getting Started: Edit the MANUAL CONFIG section of the Makefile"
+	@echo "Setup Targets: download and install VMs"
 	@echo "\t$(BLUE)make download$(NOCOLOR)\t\t URL instructions to download bz2s"
+	@echo "\t$(BLUE)make deploy$(NOCOLOR)\t\t Execute following installation steps in order"
+	@echo "Installation Step Targets: (If Deploy Fails)"
 	@echo "\t$(BLUE)make deps$(NOCOLOR)\t\t install all dependencies"
 	@echo "\t$(BLUE)make bridge_configure$(NOCOLOR)\t automatically setup network bridge"
 	@echo "\t$(BLUE)make extract$(NOCOLOR)\t\t extract qcow2 images from downloaded bz2s"
 	@echo "\t$(BLUE)make vm_overwrite$(NOCOLOR)\t create or replace VMs with backups"
-
-
+	@echo "\t$(BLUE)make vm_install$(NOCOLOR)\t\t Install all VMs"
+	@echo "Utility Targets":
+	@echo "\t$(BLUE)make vm_undefine$(NOCOLOR)\t remove installed vms so reinstall can occur"
+	@echo "\t$(BLUE)make vm_reboot$(NOCOLOR)\t\t reboot all active VMs"
+	@echo "\t$(BLUE)make vm_shutdown$(NOCOLOR)\t shutdown all active VMs"
+	@echo "\t$(BLUE)make vm_start$(NOCOLOR)\t\t start all inactive VMs"
 download:
 	mkdir -p download
 	@echo Download the following files to current directory or "download" folder, login may be required
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2
-# wget https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2 -P download 
-# wget https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2 -P download 
-# wget https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2 -P download 
+
+deploy: check_sure deps dirs bridge-configure extract chassis_reset load_reset client_reset vm_install
 
 deps:
 	sudo apt -y update
