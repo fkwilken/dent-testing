@@ -1,6 +1,13 @@
+# Description
+
+This is the directory to document how to run test cases once your HW or VM testbed is set up.
+
+## Table of Contents
+
+1. [Running DentOS SIT tests](#running-dentos-sit-tests)
+1. [Running DentOS Functional tests](#running-dentos-functional-tests)
 
 ### Prepare test running environment
-
 * clone the `dentproject/testing` repository into your working directory:
 
 ```Shell
@@ -58,7 +65,6 @@ Go to directory `DentOS_Framework/` and run below commands:
   --config configuration/testbed_config/sit/testbed.json \
   --config-dir configuration/testbed_config/sit/ \
   --suite-groups suite_group_clean_config \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
   --discovery-reports-dir ./reports \
   –-discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/
 ```
@@ -74,7 +80,6 @@ This will check the connectivity and basically make the environment.
   --suite-groups suite_group_test suite_group_l3_tests suite_group_basic_trigger_tests suite_group_traffic_tests suite_group_tc_tests suite_group_bgp_tests \
                  suite_group_stress_tests suite_group_system_wide_testing suite_group_system_health suite_group_store_bringup suite_group_alpha_lab_testing \
                  suite_group_dentv2_testing suite_group_connection suite_group_platform \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
   --discovery-reports-dir ./reports \
   --discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/
 ```
@@ -86,7 +91,6 @@ This will check the connectivity and basically make the environment.
   --config configuration/testbed_config/sit/testbed.json \
   --config-dir configuration/testbed_config/sit/ \
   --suite-groups <suite group name> \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
   --discovery-reports-dir ./reports \
   --discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/ <test case from the suit>
 ```
