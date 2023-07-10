@@ -81,6 +81,7 @@ deps:
 extract: dirs $(QCOWS)
 
 bridge_configure:  00-installer-config_generated.yaml
+00-installer-config_generated.yaml:
 	cp 00-installer-config.yaml 00-installer-config_generated.yaml
 	sed -i 's/DEFAULT_NETDEV/$(DEFAULT_NETDEV)/g' 00-installer-config_generated.yaml 
 	sed -i 's,DEFAULT_IP,$(DEFAULT_IP),g' 00-installer-config_generated.yaml 
