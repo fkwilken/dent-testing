@@ -1,13 +1,12 @@
 # Description
 
-This is the directory to document how to start/run the tests from the scratch.
+This file documents the hardware testbed setup using IxNetwork VM on an Ubuntu 22.04 Server with an Ixia Hardware Chassis.
 
 ## Table of content
 
 1. [Hardware Requirements](#hardware-requirements)
 1. [Prepare Testbed Server](#prepare-testbed-server)
-1. [Running DentOS SIT tests](#running-dentos-sit-tests)
-1. [Running DentOS Functional tests](#running-dentos-functional-tests)
+1. [Set Up Network](#setup-network)
 
 ## Hardware Requirements
 
@@ -96,7 +95,7 @@ TODO: create a lab BOM
     sudo systemctl start libvirtd
 ```
 
-### Setup network
+## Setup Network
 * setup management port configuration using this sample `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
