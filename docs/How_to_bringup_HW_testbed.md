@@ -202,4 +202,4 @@ virsh autostart IxNetwork-930
   To change the IP address, log in as admin (password: admin) below
 ```
 ## License IxNetwork VE
-Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_run_testcases.md).
+Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
