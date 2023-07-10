@@ -80,11 +80,13 @@ deps:
 # Create Directories and Extract if Necessary
 extract: dirs $(QCOWS)
 
-bridge_configure:
+bridge_configure:  00-installer-config_generated.yaml
 	cp 00-installer-config.yaml 00-installer-config_generated.yaml
 	sed -i 's/DEFAULT_NETDEV/$(DEFAULT_NETDEV)/g' 00-installer-config_generated.yaml 
 	sed -i 's,DEFAULT_IP,$(DEFAULT_IP),g' 00-installer-config_generated.yaml 
-	sed -i 's/DEFAULT_GATEWAY/$(DEFAULT_GATEWAY)/g' 00-installer-config_generated.yaml 
+	sed -i 's/DEFAULT_GATEWAY/$(DEFAULT_GATEWAY)/g' 00-installer-config_generated.yaml
+	sudo mkdir -p /etc/netplan/old 
+	sudo mv /etc/netplan/00-installer-config.yaml /etc/netplan/old
 	sudo cp 00-installer-config_generated.yaml /etc/netplan/00-installer-config.yaml
 	sudo netplan apply
 	sudo ufw allow in on $(CTL_BRIDGE)
