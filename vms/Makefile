@@ -23,16 +23,18 @@ LOAD_MAC 	= 00:1a:c5:00:00:31 00:1a:c5:00:00:32 	00:1a:c5:00:00:33 	00:1a:c5:00:
 LOAD_IP 	= 10.36.118.161 	10.36.118.162 		10.36.118.163 		10.36.118.164
 LOAD_PCI	= pci_0000_65_00_0	pci_0000_65_00_1	pci_0000_65_00_2	pci_0000_65_00_3
 
-
+### Colors ###
+BLUE=\033[0;34m
+NOCOLOR=\033[0m
 #### Manual Targets ####
 .PHONY: all help extract vm_overwrite download
 
 all help: 
-	@echo "Use '\033[0;34m make download \033[0m' for URL instructions to download bz2s"
-	@echo "Use '\033[0;34m make deps \033[0m' to install all dependencies"
-	@echo "Use '\033[0;34m make bridge_configure \033[0m' to automatically setup network bridge"
-	@echo "Use '\033[0;34m make extract \033[0m' to extract qcow2 images from downloaded bz2s"
-	@echo "Use '\033[0;34m make vm_overwrite \033[0m' to create or replace VMs with backups"
+	@echo "\t$(BLUE)make download$(NOCOLOR)\t\t URL instructions to download bz2s"
+	@echo "\t$(BLUE)make deps$(NOCOLOR)\t\t install all dependencies"
+	@echo "\t$(BLUE)make bridge_configure$(NOCOLOR)\t automatically setup network bridge"
+	@echo "\t$(BLUE)make extract$(NOCOLOR)\t\t extract qcow2 images from downloaded bz2s"
+	@echo "\t$(BLUE)make vm_overwrite$(NOCOLOR)\t create or replace VMs with backups"
 
 
 download:
