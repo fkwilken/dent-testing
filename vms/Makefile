@@ -16,7 +16,7 @@ LOAD_PCI	= pci_0000_65_00_0	pci_0000_65_00_1	pci_0000_65_00_2	pci_0000_65_00_3
 
 #### AUTO CONFIG #####
 DEFAULT_NETDEV = $(shell ip route | grep 'default' | cut -d " " -f 5)
-DEFAULT_IP	   = $(shell ip a show $(DEFAULT_NETDEV) | grep 'inet' | cut -d " " -f 6 )
+DEFAULT_IP	   = $(shell ip a show $(DEFAULT_NETDEV) | grep -w 'inet' | cut -d " " -f 6 )
 DEFAULT_GATEWAY = $(shell ip route | grep 'default' | cut -d " " -f 3)
 
 LOAD_MODULES 	= $(shell seq $(N_LOAD_MODULES))
@@ -54,7 +54,7 @@ download:
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2
 
-deploy: check_sure deps dirs bridge-configure extract chassis_reset load_reset client_reset vm_install
+deploy: check_sure deps dirs bridge_configure extract chassis_reset load_reset client_reset vm_install
 
 deps:
 	sudo apt -y update
