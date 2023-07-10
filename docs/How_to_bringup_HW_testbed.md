@@ -11,7 +11,7 @@ This file documents the hardware testbed setup using IxNetwork VM on an Ubuntu 2
 1. [License IxNetwork VE](#license-ixnetwork-ve)
 ## Hardware Requirements
 
-* 1-7 Dentos Devices.
+* 4-7 DentOS Devices.
 * 1 Ixia Chassis with 16 10G port running IxOS/IxNetwork EA versions [We are using 9.20 EA].
 * 1 IxNetwork EA API server.
 * 1 linux with Ubuntu 22.04 Server (centos8 will also work or other distributions but the instructions bellow are for ubuntu 22.04)
@@ -97,6 +97,7 @@ TODO: create a lab BOM
 ```
 
 ## Setup Network
+A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan:
 * setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
