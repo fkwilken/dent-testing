@@ -40,7 +40,7 @@ all help:
 	@echo "\t$(BLUE)make deps$(NOCOLOR)\t\t install all dependencies"
 	@echo "\t$(BLUE)make bridge_configure$(NOCOLOR)\t automatically setup network bridge"
 	@echo "\t$(BLUE)make extract$(NOCOLOR)\t\t extract qcow2 images from downloaded bz2s"
-	@echo "\t$(BLUE)make vm_overwrite$(NOCOLOR)\t create or replace VMs with backups"
+	@echo "\t$(BLUE)make vm_overwrite$(NOCOLOR)\t create or replace VM images with backups"
 	@echo "\t$(BLUE)make vm_install$(NOCOLOR)\t\t Install all VMs"
 	@echo "Utility Targets":
 	@echo "\t$(BLUE)make vm_undefine$(NOCOLOR)\t remove installed vms so reinstall can occur"
@@ -86,6 +86,7 @@ bridge_configure:  00-installer-config_generated.yaml
 	sed -i 's/DEFAULT_NETDEV/$(DEFAULT_NETDEV)/g' 00-installer-config_generated.yaml 
 	sed -i 's,DEFAULT_IP,$(DEFAULT_IP),g' 00-installer-config_generated.yaml 
 	sed -i 's/DEFAULT_GATEWAY/$(DEFAULT_GATEWAY)/g' 00-installer-config_generated.yaml
+	sed -i 's/CTL_MAC/$(CTL_MAC)/g' 00-installer-config_generated.yaml
 	sudo mkdir -p /etc/netplan/old 
 	sudo mv /etc/netplan/00-installer-config.yaml /etc/netplan/old
 	sudo cp 00-installer-config_generated.yaml /etc/netplan/00-installer-config.yaml
@@ -98,6 +99,8 @@ bridge_configure:  00-installer-config_generated.yaml
 vm_overwrite: check_sure dirs chassis_reset load_reset client_reset
 
 vm_install:
+# Let Libvirt Read Files
+	sudo setfacl -m u:libvirt-qemu:rx ~
 # Install Client
 	virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
 		--disk client/client.qcow2,bus=sata --import --os-variant centos7.0 \

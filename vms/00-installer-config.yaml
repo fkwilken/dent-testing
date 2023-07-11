@@ -6,6 +6,7 @@ network:
       dhcp6: false
   bridges:
     br1:
+      macaddress: CTL_MAC
       interfaces: [DEFAULT_NETDEV]  # Bridge connected to ethernet
       addresses: [DEFAULT_IP]       # IP
       routes:
