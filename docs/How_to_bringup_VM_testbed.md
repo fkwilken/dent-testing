@@ -10,7 +10,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and IxLoad 
 1. [License VMs](#license-vms)
 ## Hardware Requirements
 
-* 4-7 DentOS Devices.
+* 1-4 DentOS Devices.
 * 1 Linux with Ubuntu 22.04 Server 
 
 ## Hardware Setup
@@ -58,7 +58,10 @@ PCI Passthrough enables each Load Module VM to control its own NIC port. This re
 * Reboot, PCI Passthrough should now be possible during the VM Installation step.
 
 ## VM Installation Steps
-Installation of VMs can be achieved automatically by downloading the images below and configuring the Makefile in `dent-testing/vms`. Once configured, run `make deploy` to run all installation steps. 
+
+Automatically install by downloading the images below and configuring the Makefile in `dent-testing/vms`. 
+
+Once configured, run `make deploy` to run all installation steps. 
 
 ### Download VM Images
 Download the folling three compressed VM images to `dent-testing/vms` or `dent-testing/vms/download`
@@ -158,7 +161,7 @@ Manual:
 
 * `tar -xf FILE.qcow2.tar.bz2 --use-compress-program=lbzip2` for each
 * Make as many copies of the load module VM (.qcow2) file as you need load modules
-* 
+
 #### Install VMs
 Automatic: `make vm_install`
 
@@ -203,4 +206,4 @@ virsh autostart IxLoadN-930
   To change the IP address, log in as admin (password: admin) below
 ```
 ## License VMs
-Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
+Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoad VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
