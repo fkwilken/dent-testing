@@ -51,37 +51,6 @@ TODO: create a lab BOM
     sudo systemctl restart sshd
 ```
 
-### Install docker
-
-* install Docker (all credits to [Docker manual](https://docs.docker.com/engine/install/ubuntu/) )
-
-```Shell
-    sudo apt-get -y remove docker docker-engine docker.io containerd runc
-    sudo apt-get update
-    sudo apt-get -y install \
-      apt-transport-https \
-      ca-certificates \
-      curl \
-      gnupg-agent \
-      gnupg \
-      lsb-release \
-      software-properties-common
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo docker run hello-world
-```
-
-* add your user to docker group
-
-```Shell
-    sudo usermod -aG docker $USER
-```
-
 ### Install KVM
 
 * install KVM (required by IxNetwork API server)
