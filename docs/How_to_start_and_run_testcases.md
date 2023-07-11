@@ -4,8 +4,41 @@ This is the directory to document how to run test cases once your HW or VM testb
 
 ## Table of Contents
 
+1. [Getting Started](#getting-started)
 1. [Running DentOS SIT tests](#running-dentos-sit-tests)
 1. [Running DentOS Functional tests](#running-dentos-functional-tests)
+
+## Getting Started
+### Install docker
+
+* install Docker (all credits to [Docker manual](https://docs.docker.com/engine/install/ubuntu/) )
+
+```Shell
+    sudo apt-get -y remove docker docker-engine docker.io containerd runc
+    sudo apt-get update
+    sudo apt-get -y install \
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      gnupg-agent \
+      gnupg \
+      lsb-release \
+      software-properties-common
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+    sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo docker run hello-world
+```
+
+* add your user to docker group
+
+```Shell
+    sudo usermod -aG docker $USER
+```
 
 ### Prepare test running environment
 * clone the `dentproject/testing` repository into your working directory:
