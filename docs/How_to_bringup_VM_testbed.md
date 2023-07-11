@@ -1,23 +1,19 @@
 # Description
 
-This is the directory to document how to start/run the tests from the scratch.
+This file documents the VM Testbed setup using IxNetwork, IxChassis, and IxLoad VMs on an Ubuntu 22.04 Server with connected NIC.
 
 ## Table of content
 
 1. [Hardware Requirements](#hardware-requirements)
-1. [Prepare Testbed Server](#prepare-testbed-server)
-1. [Running DentOS SIT tests](#running-dentos-sit-tests)
-1. [Running DentOS Functional tests](#running-dentos-functional-tests)
-
+1. [Hardware Setup](#hardware-setup)
+1. [VM Installation Steps](#vm-installation-steps)
+1. [License VMs](#license-vms)
 ## Hardware Requirements
 
-* 7 Dentos Devices.
-* 1 Ixia Chassis with 16 10G port running IxOS/IxNetwork EA versions [We are using 9.20 EA].
-* 1 IxNetwork EA API server.
-* 1 linux with Ubuntu 22.04 (centos8 will also work or other distributions but the instructions bellow are for ubuntu 22.04)
-TODO: create a lab BOM
+* 4-7 DentOS Devices.
+* 1 Linux with Ubuntu 22.04 Server 
 
-## Prepare Testbed Server
+## Hardware Setup
 
 ### Install OS
 
@@ -26,7 +22,7 @@ TODO: create a lab BOM
   * on disk setup: disable LVM (optional)
   * on profile setup: put name, servername, username, password all as `dent` for example purposes
   * on ssh setup: enable `install OpenSSH server`
-* Install Ubuntu prerequisites
+ * Install Ubuntu prerequisites
 
 ```Shell
     sudo apt -y update
@@ -41,49 +37,7 @@ TODO: create a lab BOM
       make \
       lbzip2
 ```
-
-* enable root (optional)
-
-```Shell
-    sudo sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
-    echo 'root:YOUR_PASSWORD' | sudo chpasswd
-    sudo systemctl restart sshd
-```
-
-### Install docker
-
-* install Docker (all credits to [Docker manual](https://docs.docker.com/engine/install/ubuntu/) )
-
-```Shell
-    sudo apt-get -y remove docker docker-engine docker.io containerd runc
-    sudo apt-get update
-    sudo apt-get -y install \
-      apt-transport-https \
-      ca-certificates \
-      curl \
-      gnupg-agent \
-      gnupg \
-      lsb-release \
-      software-properties-common
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-    sudo docker run hello-world
-```
-
-* add your user to docker group
-
-```Shell
-    sudo usermod -aG docker $USER
-```
-
-### Install KVM
-
-* install KVM (required by IxNetwork API server)
+* Install KVM prerequisites
 
 ```Shell
     sudo apt -y install cpu-checker
@@ -94,16 +48,63 @@ TODO: create a lab BOM
     sudo systemctl enable libvirtd
     sudo systemctl start libvirtd
 ```
+### Configure PCI Passthrough
+PCI Passthrough enables each Load Module VM to control its own NIC port. This requires enabling Virtualization, IOMMU, and/or VT-D in your BIOS. This will depend on your BIOS manufacturer. Once done, it can be configured in Ubuntu. 
 
-### Setup network
-* The VMs must be able to communicate over a shared management network. This is achieved by configuring a bridge connected to the server's main ethernet port. 
-* setup management port configuration using this sample `/etc/netplan/00-installer-config.yaml`:
+* Edit your grub configuration based on your processor type:
+   * Intel CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="intel_iommu=on"`
+   * AMD CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="amd_iommu=on"`
+* Apply the new grub configuration with `sudo update-grub`
+* Reboot, PCI Passthrough should now be possible during the VM Installation step.
+
+## VM Installation Steps
+Installation of VMs can be achieved automatically by downloading the images below and configuring the Makefile in `dent-testing/vms`. Once configured, run `make deploy` to run all installation steps. 
+
+### Download VM Images
+Download the folling three compressed VM images to `dent-testing/vms` or `dent-testing/vms/download`
+
+* [IxNetworkVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2)
+
+* [IxChassisVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2)
+
+* [IxLoadVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
+
+### Configure MAC Addresses and PCI Addresses
+This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadVMs need to be given IP reservations by your network's router or DHCP Server. 
+
+Edit the `MANUAL CONFIG` section of the Makefile in the dent-testing/vms folder:
+* Edit the `CLIENT_MAC`, `CHASSIS_MAC`, and `LOAD_MAC` lists to hold unique mac addresses for each VM. Give each of these addresses a desired IP Reservation.
+* Edit the `CTL_MAC` to a hold unique mac addresses to be used for a network bridge on the server.
+* Assign both your server's primary ethernet mac address and the `CTL_BRIDGE` mac address an identical IP. This way, when a bridge is created on the network adapter, the server's primary IP will not change.
+With these mac addresses and reservations, the VMS should start with known IP addresses.
+
+The Ethernet Ports to be used with PCI Passthrough also need to be set up in  `MANUAL CONFIG`  for automated installation:
+* Use `lspci` to find the PCI Addresses of the Ethernet Ports to be used by the load modules, for example `AB:12.3`
+* Use `virsh nodedev-list` to find the associated libvirt known device with each port, for exampe `pci_0000_ab_12_3`
+* Fill in the PCI address of each ethernet port into the `LOAD_PCI` list in the Makefile
+
+### Deploy VMS
+With the previous two steps complete, VMs are ready to be deployed.  
+
+* `make deploy` will automtically configure the network, extract, and install the VMs based on the Makefile configuration.
+
+* `make` or `make help` will list available installation steps in case a step fails or for manual installation
+
+The installation process is described below for manual installation.
+
+#### Setup Network
+A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan.
+
+Automatic: `make bridge_configure`
+ 
+Manual:
+* setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
 ---
 network:
   ethernets:
-    eth_used: # Connected Ethernet
+    eth_used: # Connected Ethernet Device (maybe eth0)
       dhcp4: false
       dhcp6: false
     eth_unused: # Unused Ethernets
@@ -113,7 +114,7 @@ network:
   bridges:
     br1:
       interfaces: [eth_used] # Bridge connected to ethernet
-      addresses: [10.36.118.11/24] # IP
+      addresses: [10.36.118.11/24] # Server IP
       routes:
         - to: default
           via: 10.36.118.1  # Default Gateway
@@ -138,42 +139,50 @@ network:
 sudo apt -y install yamllint
 yamllint /etc/netplan/00-installer-config.yaml
 ```
-
+* Apply Netplan and Edit Firewall Settings to allow IxNetwork DHCP Resolution on bridge:
+  * ```Shell
+    sudo netplan apply
+    sudo ufw allow in on br1
+    sudo ufw route allow in on br1
+    sudo ufw route allow out on br1
+    ```
 * reboot
-  * ensure networking is ok
-  * this is needed also for the permissions to be update, otherwise next step will fail
+  * ensure networking is working, for example verify output received from ```curl www.google.com```
+  * If this fails, check that IP Reservations on router or DHCP Server match the bridge
 
-### Install IxNetwork VE
+#### Extract and Copy VMs
 
-* VMs
-  * create vms folder
+Automatic: `make extract` then `make vm_overwrite`
 
-  ```Shell
-  sudo mkdir /vms
-  sudo chmod 775 -R /vms
-  ```
+Manual: 
 
-  * download [IxNetwork kvm image](https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2).
-  * copy `IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2` to `/vms/` on your testbed server.
+* `tar -xf FILE.qcow2.tar.bz2 --use-compress-program=lbzip2` for each
+* Make as many copies of the load module VM (.qcow2) file as you need load modules
+* 
+#### Install VMs
+Automatic: `make vm_install`
 
-* start the VMs:
-
+Manual:
+For the IxNetwork and IxChassis VMs, install using this formula:
 ```Shell
-cd /vms
-
-sudo tar xjf IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2
-
-virt-install --name IxNetwork-930 --memory 16000 --vcpus 8 --disk /vms/IxNetworkWeb_KVM_9.30.2212.22.qcow2,bus=sata --import --os-variant centos7.0 --network bridge=br1,model=virtio --noautoconsole
-virsh autostart IxNetwork-930
-
+virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
+		--disk CLIENT.qcow2,bus=sata --import --os-variant centos7.0 \
+		--network bridge=br1,model=virtio,mac=CLIENT_MAC--noautoconsole	
+	virsh autostart IxNetwork-930
+```
+For the IxLoad VMs, install using this formula:
+```Shell
+virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 						\
+		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off 			\
+		--network bridge=br1,model=virtio,mac=LOAD_MAC_N --noautoconsole	\
+		--host-device=PCI_N
+virsh autostart IxLoadN-930
 ```
 
-* configure the IxNetwork VM ip:
-
+* Check that the VMs have expected IP for each VM:
 ```Shell
     virsh console IxNetwork-930 --safe
 ```
-
   if a dhcp server is present we can observe the IP assigned
 
 ```code
@@ -193,180 +202,5 @@ virsh autostart IxNetwork-930
   The IPv6 global address is not configured
   To change the IP address, log in as admin (password: admin) below
 ```
-
-### Prepare test running environment
-
-* clone the `dentproject/testing` repository into your working directory:
-
-```Shell
-git clone https://github.com/dentproject/testing
-
-# optional change to a different branch
-# cd ./testing
-# git checkout <branch name>
-```
-
-* build container (optional)
-
-To save the time during the actual test run and to validate the environment it's recommended to build a container now.
-
-```Shell
-cd DentOS_Framework
-./run.sh dentos_testbed_runtests -h
-```
-
-You should see the help message from the DentOS framework.
-
-## Running DentOS SIT tests
-
-Overall steps:
-
-  1. Setup Testbed Server
-  2. Setup the DentOS [SIT topology](./System_integration_test_bed/README.md) with DENT-Aggregator, DENT-Distributor & DENT-Infrastructure DUTs
-  3. Install DentOS on DUTs
-  4. Run the tests
-  5. Check Logs locally at `./DentOS_Framework/DentOsTestbed/logs`
-
-We will go through the process/steps in details below -
-
-### System Integration Testbed preparation
-
-As per the testbed diagram connect all required cables among DUTs (DENT devices) and Keysight devices.
-
-[System Integration Testbed](https://github.com/dentproject/testing/docs/System_integration_test_bed)
-
-Change the testbed settings in the `testbed.json` as per your current testbed at `./DentOS_Framework/DentOsTestbed/configuration/testbed_config/sit`
-
-### Install DentOS on the DUTs in SIT
-
-To install DentOS follow the instructions here `TODO: add link here`
-
-### Run the tests
-
-Make sure all boxes are up with proper IP address that you gave on the settings file.
-Also make sure they are pinging each other.
-
-Go to directory `DentOS_Framework/` and run below commands:
-
-```Shell
-./run.sh dentos_testbed_runtests -d --stdout \
-  --config configuration/testbed_config/sit/testbed.json \
-  --config-dir configuration/testbed_config/sit/ \
-  --suite-groups suite_group_clean_config \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
-  --discovery-reports-dir ./reports \
-  –-discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/
-```
-
-This will check the connectivity and basically make the environment.
-
-### Run all SIT test cases
-
-```Shell
-./run.sh dentos_testbed_runtests -d --stdout \
-  --config configuration/testbed_config/sit/testbed.json \
-  --config-dir configuration/testbed_config/sit/ \
-  --suite-groups suite_group_test suite_group_l3_tests suite_group_basic_trigger_tests suite_group_traffic_tests suite_group_tc_tests suite_group_bgp_tests \
-                 suite_group_stress_tests suite_group_system_wide_testing suite_group_system_health suite_group_store_bringup suite_group_alpha_lab_testing \
-                 suite_group_dentv2_testing suite_group_connection suite_group_platform \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
-  --discovery-reports-dir ./reports \
-  --discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/
-```
-
-### Run a single test case
-
-```Shell
-./run.sh dentos_testbed_runtests -d --stdout \
-  --config configuration/testbed_config/sit/testbed.json \
-  --config-dir configuration/testbed_config/sit/ \
-  --suite-groups <suite group name> \
-  --discovery-reports-dir DISCOVERY_REPORTS_DIR \
-  --discovery-reports-dir ./reports \
-  --discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/ <test case from the suit>
-```
-
-## Running DentOS Functional tests
-
-Overall steps:
-
-  1. Setup Testbed Server (previous step)
-  2. Setup the DentOS **Functional topology**
-  3. Install DentOS on DUT or cleanup configuration if it was used by SIT before
-  4. Run the tests
-  5. Check Logs locally at `./DentOS_Framework/DentOsTestbed/logs`
-
-### Functional Testbed preparation
-
-Functional testbed consists of a single DentOS device connected to the IxNetwork using 4 links.
-If you have already assembled SIT testbed according to the diagram, you can use any device out of it separately.
-
-Change the testbed settings in the `testbed.json` as per your current testbed at `./DentOS_Framework/DentOsTestbed/configuration/testbed_config/basic_*` (NOTE: `basic_` prefix in subfolder names)
-
-### Install DentOS on the DUT
-
-To install DentOS follow the instructions here `TODO: add link here`
-
-### Cleanup DUT configuration
-
-After the running SIT regression DUTs are usually contains specific persistent network configuration which interferes with the functional test cases.
-
-In the following example INFRA2 functional topology is used. Note the path to the configuration - `configuration/testbed_config/basic_infra2`.
-
-Run the following commands to cleanup the device:
-
-```Shell
-./run.sh dentos_testbed_runtests --stdout \
-  --config configuration/testbed_config/basic_infra2/testbed.json \
-  --config-dir configuration/testbed_config/basic_infra2/ \
-  --discovery-reports-dir /tmp \
-  --suite-groups suite_group_clean_config
-```
-
-The test should pass and DUT should not contain any network configuration except the management port IP address.
-
-### Run functional regression
-
-```Shell
-./run.sh dentos_testbed_runtests --stdout \
-  --config configuration/testbed_config/basic_infra2/testbed.json \
-  --config-dir configuration/testbed_config/basic_infra2/ \
-  --discovery-reports-dir /tmp \
-  --suite-groups suite_group_functional
-```
-
-### Run specific functional tests/suites
-
-Use `-k` option to select any specific test function or test suite from the selected test group.
-
-Here are an example of how to run the VLAN test suite:
-
-```Shell
-./run.sh dentos_testbed_runtests --stdout \
-  --config configuration/testbed_config/basic_infra2/testbed.json \
-  --config-dir configuration/testbed_config/basic_infra2/ \
-  --discovery-reports-dir /tmp \
-  --suite-groups suite_group_functional \
-  -k suite_functional_vlan
-```
-
-**NOTE:**
-
-1. To avoid re-installing of the DentOS framework on each run command just enter the docker container and run multiple commands from inside.
-2. You can use all supported pytest CLI arguments. dentos_testbed_runtests passes all unrecognized by arguments directly to the pytest.
-
-```Shell
-./run.sh
-dentos_testbed_runtests -h
-dentos_testbed_runtests --stdout \
-  --config configuration/testbed_config/basic_infra2/testbed.json \
-  --config-dir configuration/testbed_config/basic_infra2/ \
-  --discovery-reports-dir /tmp \
-  --suite-groups suite_group_functional \
-  -k suite_functional_vlan \
-  --collectonly --pdb
-```
-
----
-
- [^1]: it can be also CentOS Archlinux .... but the example commands shown are for Ubuntu.
+## License VMs
+Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
