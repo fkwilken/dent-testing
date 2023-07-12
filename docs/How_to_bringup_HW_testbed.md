@@ -89,7 +89,7 @@ network:
           via: 10.36.118.1  # Default Gateway
       mtu: 1500
       nameservers:
-        addresses: [1.1.1.1, 8.8.8.8]
+        addresses: [1.1.1.1, 8.8.8.8, 156.140.198.11, 156.140.214.11]
       parameters:
         stp: false
         forward-delay: 0
