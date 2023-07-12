@@ -1,6 +1,6 @@
 # Description
 
-This file documents the VM Testbed setup using IxNetwork, IxChassis, and IxLoad VMs on an Ubuntu 22.04 Server with connected NIC.
+This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Load Module VMs on an Ubuntu 22.04 Server with connected NIC.
 
 ## Table of content
 
@@ -70,10 +70,10 @@ Download the folling three compressed VM images to `dent-testing/vms` or `dent-t
 
 * [IxChassisVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2)
 
-* [IxLoadVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
+* [Ixia Card/Load Module VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
 
 ### Configure MAC Addresses and PCI Addresses
-This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadVMs need to be given IP reservations by your network's router or DHCP Server. 
+This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server. 
 
 Edit the `MANUAL CONFIG` section of the Makefile in the dent-testing/vms folder:
 * Edit the `CLIENT_MAC`, `CHASSIS_MAC`, and `LOAD_MAC` lists to hold unique mac addresses for each VM. Give each of these addresses a desired IP Reservation.
@@ -123,7 +123,7 @@ network:
           via: 10.36.118.1  # Default Gateway
       mtu: 1500
       nameservers:
-        addresses: [1.1.1.1, 8.8.8.8]
+        addresses: [1.1.1.1, 8.8.8.8, 156.140.198.11, 156.140.214.11]
       parameters:
         stp: false
         forward-delay: 0
@@ -173,7 +173,7 @@ virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
 		--network bridge=br1,model=virtio,mac=CLIENT_MAC--noautoconsole	
 	virsh autostart IxNetwork-930
 ```
-For the IxLoad VMs, install using this formula:
+For the IxLoadModule VMs, install using this formula:
 ```Shell
 virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 						\
 		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off 			\
@@ -206,4 +206,4 @@ virsh autostart IxLoadN-930
   To change the IP address, log in as admin (password: admin) below
 ```
 ## License VMs
-Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoad VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
+Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoadModule VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
