@@ -96,7 +96,7 @@ The Ethernet Ports to be used with PCI Passthrough also need to be set up in  `M
 
 ### Deploy VMS
 
-With the previous two steps complete, VMs are ready to be deployed.  
+With the previous two steps complete, VMs are ready to be deployed.
 
 * `make deploy` will automatically configure the network, extract, and install the VMs based on the Makefile configuration.
 
