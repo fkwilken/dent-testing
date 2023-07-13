@@ -76,24 +76,24 @@ deps:
 	sudo usermod -aG kvm $(USER)
 	sudo systemctl enable libvirtd
 	sudo systemctl start libvirtd
-	
+
 # Create Directories and Extract if Necessary
 extract: dirs $(QCOWS)
 
 bridge_configure:  00-installer-config_generated.yaml
 00-installer-config_generated.yaml:
 	cp 00-installer-config.yaml 00-installer-config_generated.yaml
-	sed -i 's/DEFAULT_NETDEV/$(DEFAULT_NETDEV)/g' 00-installer-config_generated.yaml 
-	sed -i 's,DEFAULT_IP,$(DEFAULT_IP),g' 00-installer-config_generated.yaml 
+	sed -i 's/DEFAULT_NETDEV/$(DEFAULT_NETDEV)/g' 00-installer-config_generated.yaml
+	sed -i 's,DEFAULT_IP,$(DEFAULT_IP),g' 00-installer-config_generated.yaml
 	sed -i 's/DEFAULT_GATEWAY/$(DEFAULT_GATEWAY)/g' 00-installer-config_generated.yaml
 	sed -i 's/CTL_MAC/$(CTL_MAC)/g' 00-installer-config_generated.yaml
-	sudo mkdir -p /etc/netplan/old 
+	sudo mkdir -p /etc/netplan/old
 	sudo mv /etc/netplan/00-installer-config.yaml /etc/netplan/old
 	sudo cp 00-installer-config_generated.yaml /etc/netplan/00-installer-config.yaml
 	sudo netplan apply
 	sudo ufw allow in on $(CTL_BRIDGE)
 	sudo ufw route allow in on $(CTL_BRIDGE)
-	sudo ufw route allow out on $(CTL_BRIDGE)	
+	sudo ufw route allow out on $(CTL_BRIDGE)
 
 # CAUTION: OVERWRITES EXISTING VMS
 vm_overwrite: check_sure dirs chassis_reset load_reset client_reset
@@ -104,13 +104,13 @@ vm_install:
 # Install Client
 	virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
 		--disk client/client.qcow2,bus=sata --import --os-variant centos7.0 \
-		--network bridge=$(CTL_BRIDGE),model=virtio,mac=$(CLIENT_MAC) --noautoconsole	
+		--network bridge=$(CTL_BRIDGE),model=virtio,mac=$(CLIENT_MAC) --noautoconsole
 	virsh autostart IxNetwork-930
 
 # Install Chassis
 	virt-install --name IxChassis-930 --memory 8000 --vcpus 4 \
 		--disk chassis/chassis.qcow2,bus=sata --import --os-variant centos7.0 	\
-		--network bridge=$(CTL_BRIDGE),model=virtio,mac=$(CHASSIS_MAC) --noautoconsole	
+		--network bridge=$(CTL_BRIDGE),model=virtio,mac=$(CHASSIS_MAC) --noautoconsole
 	virsh autostart IxChassis-930
 # Install Load Modules
 	$(foreach LMI, $(LOAD_MODULES),\
@@ -142,7 +142,7 @@ chassis_reset:
 	cp $(shell find backups/ -iname '*chassis*') chassis/chassis.qcow2 -f
 
 load_reset:
-	$(foreach n, $(LOAD_MODULES), cp $(shell find backups/ -iname '*load*') load/load$(n).qcow2 -f;) 
+	$(foreach n, $(LOAD_MODULES), cp $(shell find backups/ -iname '*load*') load/load$(n).qcow2 -f;)
 
 client_reset:
 	cp $(shell find backups/ -iname '*network*') client/client.qcow2 -f
@@ -155,5 +155,5 @@ backups/%.qcow2:
 dirs: backups/ chassis/ client/ load/ download/
 
 # Folder Creation
-%/ : 
+%/ :
 	mkdir $@
