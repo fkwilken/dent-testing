@@ -195,9 +195,9 @@ For the IxLoadModule VMs, install using this formula:
 
 ```Shell
 virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 \
-		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off \
-		--network bridge=br1,model=virtio,mac=LOAD_MAC_N --noautoconsole	\
-		--host-device=PCI_N
+    --disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off \
+    --network bridge=br1,model=virtio,mac=LOAD_MAC_N --noautoconsole \
+    --host-device=PCI_N
 virsh autostart IxLoadN-930
 ```
 
@@ -226,5 +226,6 @@ virsh autostart IxLoadN-930
   The IPv6 global address is not configured
   To change the IP address, log in as admin (password: admin) below
 ```
+
 ## License VMs
 Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoadModule VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
