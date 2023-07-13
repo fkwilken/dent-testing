@@ -8,6 +8,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 1. [Hardware Setup](#hardware-setup)
 1. [VM Installation Steps](#vm-installation-steps)
 1. [License VMs](#license-vms)
+
 ## Hardware Requirements
 
 * 1-4 DentOS Devices.
@@ -49,6 +50,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
     sudo systemctl start libvirtd
 ```
 ### Configure PCI Passthrough
+
 PCI Passthrough enables each Load Module VM to control its own NIC port. This requires enabling Virtualization, IOMMU, and/or VT-D in your BIOS. This will depend on your BIOS manufacturer. Once done, it can be configured in Ubuntu. 
 
 * Edit your grub configuration based on your processor type:
@@ -64,6 +66,7 @@ Automatically install by downloading the images below and configuring the Makefi
 Once configured, run `make deploy` to run all installation steps. 
 
 ### Download VM Images
+
 Download the folling three compressed VM images to `dent-testing/vms` or `dent-testing/vms/download`
 
 * [IxNetworkVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2)
@@ -73,6 +76,7 @@ Download the folling three compressed VM images to `dent-testing/vms` or `dent-t
 * [Ixia Card/Load Module VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
 
 ### Configure MAC Addresses and PCI Addresses
+
 This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server. 
 
 Edit the `MANUAL CONFIG` section of the Makefile in the dent-testing/vms folder:
@@ -87,6 +91,7 @@ The Ethernet Ports to be used with PCI Passthrough also need to be set up in  `M
 * Fill in the PCI address of each ethernet port into the `LOAD_PCI` list in the Makefile
 
 ### Deploy VMS
+
 With the previous two steps complete, VMs are ready to be deployed.  
 
 * `make deploy` will automtically configure the network, extract, and install the VMs based on the Makefile configuration.
@@ -96,6 +101,7 @@ With the previous two steps complete, VMs are ready to be deployed.
 The installation process is described below for manual installation.
 
 #### Setup Network
+
 A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan.
 
 Automatic: `make bridge_configure`
@@ -163,6 +169,7 @@ Manual:
 * Make as many copies of the load module VM (.qcow2) file as you need load modules
 
 #### Install VMs
+
 Automatic: `make vm_install`
 
 Manual:
