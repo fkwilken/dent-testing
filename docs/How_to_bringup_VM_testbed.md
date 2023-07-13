@@ -69,17 +69,17 @@ Once configured, run `make deploy` to run all installation steps.
 
 ### Download VM Images
 
-Download the folling three compressed VM images to `dent-testing/vms` or `dent-testing/vms/download`
+Download the following three compressed VM images to `dent-testing/vms` or `dent-testing/vms/download`
 
-* [IxNetworkVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2)
+* [IxNetwork VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2)
 
-* [IxChassisVM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2)
+* [IxChassis VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2)
 
-* [Ixia Card/Load Module VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
+* [IxLoadModule / Card VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
 
 ### Configure MAC Addresses and PCI Addresses
 
-This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server.
+This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetwork VM, IxChassis VM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server.
 
 Edit the `MANUAL CONFIG` section of the Makefile in the dent-testing/vms folder:
 
