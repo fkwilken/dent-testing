@@ -9,6 +9,7 @@ This is the directory to document how to run test cases once your HW or VM testb
 1. [Running DentOS Functional tests](#running-dentos-functional-tests)
 
 ## Getting Started
+
 ### Install docker
 
 * install Docker (all credits to [Docker manual](https://docs.docker.com/engine/install/ubuntu/) )
@@ -41,6 +42,7 @@ This is the directory to document how to run test cases once your HW or VM testb
 ```
 
 ### Prepare test running environment
+
 * clone the `dentproject/testing` repository into your working directory:
 
 ```Shell
@@ -211,4 +213,3 @@ dentos_testbed_runtests --stdout \
 
 ---
 
- [^1]: it can be also CentOS Archlinux .... but the example commands shown are for Ubuntu.
