@@ -144,7 +144,7 @@ network:
   version: 2
   # Network Renderer Choice: Network Manager can be installed for GUI support, but unncessary
   renderer: networkd
-  # renderer: NetworkManager 
+  # renderer: NetworkManager
 ```
 
 * check the yaml file is ok (optional)
