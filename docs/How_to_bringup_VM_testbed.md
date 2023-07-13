@@ -38,6 +38,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
       make \
       lbzip2
 ```
+
 * Install KVM prerequisites
 
 ```Shell
@@ -49,6 +50,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
     sudo systemctl enable libvirtd
     sudo systemctl start libvirtd
 ```
+
 ### Configure PCI Passthrough
 
 PCI Passthrough enables each Load Module VM to control its own NIC port. This requires enabling Virtualization, IOMMU, and/or VT-D in your BIOS. This will depend on your BIOS manufacturer. Once done, it can be configured in Ubuntu. 
@@ -107,6 +109,7 @@ A VM must be able to access the network through a bridge connected to the server
 Automatic: `make bridge_configure`
  
 Manual:
+
 * setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
@@ -148,6 +151,7 @@ network:
 sudo apt -y install yamllint
 yamllint /etc/netplan/00-installer-config.yaml
 ```
+
 * Apply Netplan and Edit Firewall Settings to allow IxNetwork DHCP Resolution on bridge:
   * ```Shell
     sudo netplan apply
@@ -173,14 +177,18 @@ Manual:
 Automatic: `make vm_install`
 
 Manual:
+
 For the IxNetwork and IxChassis VMs, install using this formula:
+
 ```Shell
 virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
 		--disk CLIENT.qcow2,bus=sata --import --os-variant centos7.0 \
 		--network bridge=br1,model=virtio,mac=CLIENT_MAC--noautoconsole	
 	virsh autostart IxNetwork-930
 ```
+
 For the IxLoadModule VMs, install using this formula:
+
 ```Shell
 virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 						\
 		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off 			\
@@ -190,9 +198,11 @@ virsh autostart IxLoadN-930
 ```
 
 * Check that the VMs have expected IP for each VM:
+
 ```Shell
     virsh console IxNetwork-930 --safe
 ```
+
   if a dhcp server is present we can observe the IP assigned
 
 ```code
