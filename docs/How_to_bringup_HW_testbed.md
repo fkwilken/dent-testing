@@ -151,7 +151,7 @@ virsh autostart IxNetwork-930
 ```
   
 * Optionally use the following network flag to specify a mac address for use with a DHCP server:
-  * ``` --network bridge=br1,model=virtio,mac=01:23:45:67:89:AB```
+  * ```--network bridge=br1,model=virtio,mac=01:23:45:67:89:AB```
 * configure the IxNetwork VM ip:
 
 ```Shell
