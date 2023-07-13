@@ -9,6 +9,7 @@ This file documents the hardware testbed setup using IxNetwork VM on an Ubuntu 2
 1. [Set Up Network](#setup-network)
 1. [Install IxNetwork VE](#install-ixnetwork-ve)
 1. [License IxNetwork VE](#license-ixnetwork-ve)
+
 ## Hardware Requirements
 
 * 4-7 DentOS Devices.
@@ -66,6 +67,7 @@ TODO: create a lab BOM
 ```
 
 ## Setup Network
+
 A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan:
 * setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
@@ -171,5 +173,7 @@ virsh autostart IxNetwork-930
   The IPv6 global address is not configured
   To change the IP address, log in as admin (password: admin) below
 ```
+
 ## License IxNetwork VE
+
 Before tests can be run, IxNetwork VE must be licensed. From the start page, Settings Gear -> Administration -> License Manager provides an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
