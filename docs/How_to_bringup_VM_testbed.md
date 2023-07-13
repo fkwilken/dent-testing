@@ -171,7 +171,7 @@ yamllint /etc/netplan/00-installer-config.yaml
 
 Automatic: `make extract` then `make vm_overwrite`
 
-Manual: 
+Manual:
 
 * `tar -xf FILE.qcow2.tar.bz2 --use-compress-program=lbzip2` for each
 * Make as many copies of the load module VM (.qcow2) file as you need load modules
@@ -186,16 +186,16 @@ For the IxNetwork and IxChassis VMs, install using this formula:
 
 ```Shell
 virt-install --name IxNetwork-930 --memory 8000 --vcpus 4 \
-		--disk CLIENT.qcow2,bus=sata --import --os-variant centos7.0 \
-		--network bridge=br1,model=virtio,mac=CLIENT_MAC--noautoconsole	
-	virsh autostart IxNetwork-930
+    --disk CLIENT.qcow2,bus=sata --import --os-variant centos7.0 \
+    --network bridge=br1,model=virtio,mac=CLIENT_MAC--noautoconsole
+virsh autostart IxNetwork-930
 ```
 
 For the IxLoadModule VMs, install using this formula:
 
 ```Shell
-virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 						\
-		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off 			\
+virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 \
+		--disk LOADN.qcow2,bus=sata --import --osinfo detect=on,require=off \
 		--network bridge=br1,model=virtio,mac=LOAD_MAC_N --noautoconsole	\
 		--host-device=PCI_N
 virsh autostart IxLoadN-930
