@@ -69,6 +69,7 @@ TODO: create a lab BOM
 ## Setup Network
 
 A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan:
+
 * setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
 
 ```Yaml
@@ -110,13 +111,16 @@ network:
 sudo apt -y install yamllint
 yamllint /etc/netplan/00-installer-config.yaml
 ```
+
 * Apply Netplan and Edit Firewall Settings to allow IxNetwork DHCP Resolution on bridge:
-  * ```Shell
+
+```Shell
     sudo netplan apply
     sudo ufw allow in on br1
     sudo ufw route allow in on br1
     sudo ufw route allow out on br1
-    ```
+```
+
 * reboot
   * ensure networking is working, for example verify output received from ```curl www.google.com```
   * this is needed also for the permissions to be update, otherwise next step will fail
@@ -146,9 +150,10 @@ virt-install --name IxNetwork-930 --memory 16000 --vcpus 8 --disk /vms/IxNetwork
 virsh autostart IxNetwork-930
 
 ```
-  * Optionally use the following network flag to specify a mac address for use with a DHCP server:
-    * ``` --network bridge=br1,model=virtio,mac=01:23:45:67:89:AB``` 
-* configure the IxNetwork VM ip:
+  
+ * Optionally use the following network flag to specify a mac address for use with a DHCP server:
+    * ``` --network bridge=br1,model=virtio,mac=01:23:45:67:89:AB```
+ * configure the IxNetwork VM ip:
 
 ```Shell
     virsh console IxNetwork-930 --safe
