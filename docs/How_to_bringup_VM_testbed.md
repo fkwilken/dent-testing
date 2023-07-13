@@ -12,7 +12,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 ## Hardware Requirements
 
 * 1-4 DentOS Devices.
-* 1 Linux with Ubuntu 22.04 Server 
+* 1 Linux with Ubuntu 22.04 Server
 
 ## Hardware Setup
 
@@ -23,7 +23,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
   * on disk setup: disable LVM (optional)
   * on profile setup: put name, servername, username, password all as `dent` for example purposes
   * on ssh setup: enable `install OpenSSH server`
- * Install Ubuntu prerequisites
+* Install Ubuntu prerequisites
 
 ```Shell
     sudo apt -y update
@@ -53,19 +53,19 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 
 ### Configure PCI Passthrough
 
-PCI Passthrough enables each Load Module VM to control its own NIC port. This requires enabling Virtualization, IOMMU, and/or VT-D in your BIOS. This will depend on your BIOS manufacturer. Once done, it can be configured in Ubuntu. 
+PCI Passthrough enables each Load Module VM to control its own NIC port. This requires enabling Virtualization, IOMMU, and/or VT-D in your BIOS. This will depend on your BIOS manufacturer. Once done, it can be configured in Ubuntu.
 
 * Edit your grub configuration based on your processor type:
-   * Intel CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="intel_iommu=on"`
-   * AMD CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="amd_iommu=on"`
+  * Intel CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="intel_iommu=on"`
+  * AMD CPU: edit `/etc/default/grub` to include `GRUB_CMDLINE_LINUX="amd_iommu=on"`
 * Apply the new grub configuration with `sudo update-grub`
 * Reboot, PCI Passthrough should now be possible during the VM Installation step.
 
 ## VM Installation Steps
 
-Automatically install by downloading the images below and configuring the Makefile in `dent-testing/vms`. 
+Automatically install by downloading the images below and configuring the Makefile in `dent-testing/vms`.
 
-Once configured, run `make deploy` to run all installation steps. 
+Once configured, run `make deploy` to run all installation steps.
 
 ### Download VM Images
 
@@ -79,15 +79,17 @@ Download the folling three compressed VM images to `dent-testing/vms` or `dent-t
 
 ### Configure MAC Addresses and PCI Addresses
 
-This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server. 
+This network setup is intended to work with static IP reservations rather than with DHCP requests. This means that the Ubuntu Server, IxNetworkVM, IxChassisVM, and any number of IxLoadModule VMs need to be given IP reservations by your network's router or DHCP Server.
 
 Edit the `MANUAL CONFIG` section of the Makefile in the dent-testing/vms folder:
+
 * Edit the `CLIENT_MAC`, `CHASSIS_MAC`, and `LOAD_MAC` lists to hold unique mac addresses for each VM. Give each of these addresses a desired IP Reservation.
 * Edit the `CTL_MAC` to a hold unique mac addresses to be used for a network bridge on the server.
 * Assign both your server's primary ethernet mac address and the `CTL_BRIDGE` mac address an identical IP. This way, when a bridge is created on the network adapter, the server's primary IP will not change.
 With these mac addresses and reservations, the VMS should start with known IP addresses.
 
 The Ethernet Ports to be used with PCI Passthrough also need to be set up in  `MANUAL CONFIG`  for automated installation:
+
 * Use `lspci` to find the PCI Addresses of the Ethernet Ports to be used by the load modules, for example `AB:12.3`
 * Use `virsh nodedev-list` to find the associated libvirt known device with each port, for exampe `pci_0000_ab_12_3`
 * Fill in the PCI address of each ethernet port into the `LOAD_PCI` list in the Makefile
@@ -107,7 +109,7 @@ The installation process is described below for manual installation.
 A VM must be able to access the network through a bridge connected to the server's main ethernet adapter. This is done in Ubuntu using netplan.
 
 Automatic: `make bridge_configure`
- 
+
 Manual:
 
 * setup management port configuration using this sample by editing `/etc/netplan/00-installer-config.yaml`:
@@ -153,12 +155,14 @@ yamllint /etc/netplan/00-installer-config.yaml
 ```
 
 * Apply Netplan and Edit Firewall Settings to allow IxNetwork DHCP Resolution on bridge:
-  * ```Shell
+
+```Shell
     sudo netplan apply
     sudo ufw allow in on br1
     sudo ufw route allow in on br1
     sudo ufw route allow out on br1
-    ```
+```
+
 * reboot
   * ensure networking is working, for example verify output received from ```curl www.google.com```
   * If this fails, check that IP Reservations on router or DHCP Server match the bridge
