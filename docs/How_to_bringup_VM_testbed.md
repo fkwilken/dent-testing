@@ -91,14 +91,14 @@ With these mac addresses and reservations, the VMS should start with known IP ad
 The Ethernet Ports to be used with PCI Passthrough also need to be set up in  `MANUAL CONFIG`  for automated installation:
 
 * Use `lspci` to find the PCI Addresses of the Ethernet Ports to be used by the load modules, for example `AB:12.3`
-* Use `virsh nodedev-list` to find the associated libvirt known device with each port, for exampe `pci_0000_ab_12_3`
+* Use `virsh nodedev-list` to find the associated libvirt known device with each port, for example `pci_0000_ab_12_3`
 * Fill in the PCI address of each ethernet port into the `LOAD_PCI` list in the Makefile
 
 ### Deploy VMS
 
 With the previous two steps complete, VMs are ready to be deployed.  
 
-* `make deploy` will automtically configure the network, extract, and install the VMs based on the Makefile configuration.
+* `make deploy` will automatically configure the network, extract, and install the VMs based on the Makefile configuration.
 
 * `make` or `make help` will list available installation steps in case a step fails or for manual installation
 
@@ -229,4 +229,4 @@ virsh autostart IxLoadN-930
 
 ## License VMs
 
-Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoadModule VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running testcases](How_to_start_and_run_testcases.md).
+Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The IxLoadModule VMs will use licenses based on their connected Chassis. From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license. Once licensed, see the doc on [running test cases](How_to_start_and_run_testcases.md).
