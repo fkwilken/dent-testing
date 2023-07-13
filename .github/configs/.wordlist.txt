@@ -59,6 +59,7 @@ https
 HW
 ie
 Impl
+IOMMU
 ip
 IPv
 iso
@@ -74,6 +75,7 @@ KEEPALIVED
 Keysight
 kvm
 KVM
+libvirt
 linux
 LLDP
 LVM
