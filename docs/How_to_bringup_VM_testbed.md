@@ -1,6 +1,8 @@
 # Description
 
-This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Load Module VMs on an Ubuntu 22.04 Server with connected NIC.
+This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Load Module VMs on an Ubuntu 22.04 Server with connected NIC:
+
+![VM Testbed Diagram](img/vmtestbed.drawio.png)
 
 ## Table of content
 
