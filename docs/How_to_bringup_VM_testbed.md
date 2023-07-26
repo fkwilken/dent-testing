@@ -21,7 +21,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 
 #### CPU
 
-With 6-15 active VMs at 4 virtual CPUs each, best performance is acheived with 32 cores. 16 may be acceptable at the cost of throughput.
+With 6-15 active VMs at 4 virtual CPUs each, best performance is achieved with 32 cores. 16 may be acceptable at the cost of throughput.
 
 #### RAM
 
