@@ -13,8 +13,44 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 
 ## Hardware Requirements
 
-* 1-4 DentOS Devices.
+* 1+ DentOS Devices.
 * 1 Linux with Ubuntu 22.04 Server
+* 1 NIC per DentOS DUT
+
+### Server Requirements
+
+#### CPU
+
+With 6-15 active VMs at 4 vCPUs each, best performance is acheived with 32 cores. 16 may be acceptable at the cost of throughput.
+
+#### RAM
+
+##### Minimum:
+
+* 2 GB reserved for Ubuntu Server
+* 4 GB for IxNetwork
+* 2 GB for IxChassis
+* 2 GB per Virtual Load Module 
+* 1 GB per DentOS VM
+
+16 GB for 4-port setup, 32 GB for 12-port setup including Dent-VM
+
+##### Reccomended:
+
+* 2 GB reserved for Ubuntu Server
+* 4 GB per IxNetwork, IxChassis, and Load Module VM
+
+32 GB for 4-port setup, 64 GB for 12-port setup including Dent-VM
+
+#### Disk
+
+* 25 GB for Ubuntu Server Installation
+* 13 GB for IxNetwork VM
+* 5 GB for IxChassis VM
+* 2 GB per VirtualLoadModule VM 
+* 20 GB for DentOS VM
+
+Total: 75-100 GB depending on setup
 
 ## Hardware Setup
 
