@@ -121,9 +121,9 @@ Download the following three compressed VM images to `dent-testing/vms` or `dent
 
 #### Pick Installation Targets
 
-By default, the Makefile installer deploys two seperate VM topologies.
+By default, the Makefile installer deploys two separate VM testbeds.
 
-* The hard testbed topology conencts Load Module VMs to phyiscal interfaces for a hardware DUT
+* The hard testbed topology connects Load Module VMs to physical interfaces for a hardware DUT
   * To disable hard testbed installation, comment out the `HARD_TESTBED` line at the start of the Makefile.
 * The soft testbed topology has its own Load Module VM connected virtually to a dentOS VM DUT.
   * To disable soft testbed installation, comment out the `SOFT_TESTBED` line at the start of the Makefile.
@@ -253,7 +253,7 @@ virt-install --name IxLoadN-930 --memory 4000 --vcpus 4 \
     --host-device=PCI_N
 virsh autostart IxLoadN-930
 ```
-For the dentOS VM, installation is built into the given xml:
+For the dentOS VM, installation is built into the given `xml` file:
 
 ```Shell
 virsh define dent/dent-vm.xml
