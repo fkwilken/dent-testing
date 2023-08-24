@@ -11,13 +11,13 @@ CLIENT_MAC 	= 00:1a:c5:00:00:13
 CHASSIS_MAC = 00:1a:c5:00:00:20
 
 #### MANUAL CONFIG - HW DUT VLMs ####
-# Make sure
+# Ensure LOAD_MAC and LOAD_PCI have N_LOAD_MODULES items each
 N_LOAD_MODULES 	= 4
 LOAD_MAC 	= 00:1a:c5:00:00:31 00:1a:c5:00:00:32 	00:1a:c5:00:00:33 	00:1a:c5:00:00:34
 LOAD_PCI	= pci_0000_65_00_0	pci_0000_65_00_1	pci_0000_65_00_2	pci_0000_65_00_3
 
 #### MANUAL CONFIG - DENTVM DUT + VLM ####
-N_CONNECTS 	 = 4
+N_CONNECTS 	 = 4	# If changed, update the interfaces in 'dent/dent-vm.xml'
 DVM_LOAD_MAC = 00:1a:c5:00:00:35
 
 #### AUTO CONFIG #####
