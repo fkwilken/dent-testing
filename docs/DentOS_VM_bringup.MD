@@ -3,9 +3,9 @@
 This document details the post-installation steps to bring up a fresh dentOS VM.
 
 * To deploy the dentOS VM, see [VM testbed bringup](How_to_bringup_VM_testbed.md)
-* To install a fresh version of dentOS:
-  * connect to the vm with `virsh console <dent-vm-name>`
-  * reboot the VM into `ONIE` mode
+* To install a fresh version of dentOS on the VM:
+  * connect to the VM with `virsh console <dent-vm-name>`
+  * reboot the VM and boot into `ONIE` mode
   * Run `onie-nos-install <link.to.installation.image>`
 
 ## Update Date/Time via NTP Servers
@@ -28,8 +28,7 @@ apt install curl apt-transport-https bridge-utils
 DentOS and its testbed expects switch ports to be named with the convention `swpN`, but software bridge ports are named differently. The correct naming can be achieved by editing `rc.local` so that the ports are renamed on startup:
 
 ```Shell
-echo '\
-#!/bin/sh -e
+echo '#!/bin/sh -e
 sleep 5
 ip link set enp0s4 name swp1
 ip link set enp0s5 name swp2
@@ -62,7 +61,11 @@ sudo apt update && sudo apt install frr frr-pythontools
 
 ## Update Petunia from Source
 
-[Petunia](https://github.com/dentproject/petunia) is a necessary tool that works with `tc-flower`. Check the date on the binary using `ls -l /usr/bin/tc-flower-load`, and update if necessary following the steps below.
+[Petunia](https://github.com/dentproject/petunia) is a necessary tool that works with `tc-flower`. Check the date on the binary using:
+
+```ls -l /usr/bin/tc-flower-load```
+
+Update if necessary following the steps below.
 
 ```Shell
 apt update -o
