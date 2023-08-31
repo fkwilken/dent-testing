@@ -257,14 +257,14 @@ dentos_testbed_runtests -d --stdout \
 # Clean for SIT
 dentos_testbed_runtests -d --stdout \
   --config configuration/testbed_config/basic_infra1/testbed_vm.json \
-  --config-dir configuration/testbed_config/basic_infra1_vm/ \
+  --config-dir configuration/testbed_config/sit/ \
   --suite-groups suite_group_clean_config \
   --discovery-reports-dir ./reports \
   --discovery-path ../DentOsTestbedLib/src/dent_os_testbed/discovery/modules/
 # Run SIT
 dentos_testbed_runtests -d --stdout \
   --config configuration/testbed_config/basic_infra1/testbed_vm.json \
-  --config-dir configuration/testbed_config/basic_infra1_vm/ \
+  --config-dir configuration/testbed_config/sit/ \
   --suite-groups suite_group_test suite_group_l3_tests \
                  suite_group_basic_trigger_tests \
                  suite_group_traffic_tests suite_group_tc_tests \
