@@ -9,7 +9,7 @@ This file documents the VM Testbed setup using IxNetwork, IxChassis, and Card/Lo
 1. [Hardware Requirements](#hardware-requirements)
 1. [Hardware Setup](#hardware-setup)
 1. [VM Installation Steps](#vm-installation-steps)
-1. [License VMs](#license-vms)
+1. [VM Bringup](#vm-bringup)
 
 ## Hardware Requirements
 
@@ -115,9 +115,7 @@ Download the following three compressed VM images to `dent-testing/vms` or `dent
 
 * [IxLoadModule / Card VM](https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2)
 
-* dentOS VM (To Do: Add Link)
-  * Until a download link is available, follow [these instructions](https://github.com/dentproject/dentOS/wiki/How-to-install-Dent-on-a-virtual-machine-manager) to build a dentOS VM
-  * Copy the resulting `qcow2` file to `vms/dent/dent.qcow2`
+* [dentOS VM](https://repos.refinery.dev/repository/dent/public/org/test/vm/dent-vm.tar.bz2)
 
 ### Configure Installation
 
@@ -288,7 +286,7 @@ virsh define dent/dent-vm.xml
   To change the IP address, log in as admin (password: admin) below
 ```
 
-## License VMs
+## VM Bringup
 
 ### Adding Cards to Chassis
 
@@ -300,3 +298,7 @@ Before tests can be run, IxNetwork VE and IxChassis VE must be licensed. The Loa
 
 * From the start page of the IxNetwork and IxChassis, navigate Settings Gear -> Administration/System -> License Manager for an easy way to locally host a license.
 * Once licensed, see the doc on [running test cases](How_to_start_and_run_testcases.md).
+
+### Configuring dentOS VM
+
+See the [dentOS bringup document](DentOS_VM_bringup.MD) for post-installation configuration.

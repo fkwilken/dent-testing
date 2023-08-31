@@ -74,6 +74,7 @@ download:
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/ixnetwork/9.30/IxNetworkWeb_KVM_9.30.2212.22.qcow2.tar.bz2
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Load_Module_IXN_9.30_KVM.qcow2.tar.bz2
 	@echo https://downloads.ixiacom.com/support/downloads_and_updates/public/IxVM/9.30/9.30.0.328/Ixia_Virtual_Chassis_9.30_KVM.qcow2.tar.bz2
+	@echo https://repos.refinery.dev/repository/dent/public/org/test/vm/dent-vm.tar.bz2
 
 deploy: check_sure deps dirs bridge_configure extract $(RESET) vm_install
 
